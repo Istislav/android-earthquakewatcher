@@ -76,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onProviderDisabled(String provider) {
 
             }
-        }
+        };
 
         if (Build.VERSION.SDK_INT < 23) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -87,8 +87,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER, );
-                LatLng latLng = LatLng(location.getLatitude(), location.getLongitude());
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
@@ -103,8 +103,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
         }
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
     }
 }
