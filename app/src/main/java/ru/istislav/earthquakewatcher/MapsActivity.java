@@ -26,12 +26,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
+import ru.istislav.earthquakewatcher.Model.EarthQuake;
 import ru.istislav.earthquakewatcher.Util.Constants;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -55,7 +59,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getEarthQuake();
     }
 
+
+
     private void getEarthQuake() {
+        final EarthQuake earthQuake = new EarthQuake();
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.URL,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -67,6 +75,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
                                 String place = properties.getString("place");
                                 Log.d("Properties:", place);
+
+                                // getting geometry object
+                                JSONObject geometry = features.getJSONObject(i).getJSONObject("geometry");
+                                // longitude latitude location array
+                                JSONArray coorditantes = geometry.getJSONArray("coordinates");
+
+                                double lon = coorditantes.getDouble(0);
+                                double lat = coorditantes.getDouble(1);
+
+                                earthQuake.setPlace(place);
+                                earthQuake.setLon(lon);
+                                earthQuake.setLat(lat);
+                                earthQuake.setType(properties.getString("type"));
+                                earthQuake.setTime(properties.getLong("time"));
+                                earthQuake.setMagnitude(properties.getDouble("mag"));
+                                earthQuake.setDetailLink(properties.getString("detail"));
+
+                                java.text.DateFormat dateFormat = java.text.DateFormat.getDateInstance();
+                                dateFormat.format(new Date(Long.valueOf(properties.getLong("time"))).getTime());
+
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                                markerOptions.title(earthQuake.getPlace());
+                                markerOptions.position(new LatLng(lat, lon));
+
+                                Marker marker = mMap.addMarker(markerOptions);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 1));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
