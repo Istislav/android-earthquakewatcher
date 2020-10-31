@@ -93,14 +93,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 earthQuake.setDetailLink(properties.getString("detail"));
 
                                 java.text.DateFormat dateFormat = java.text.DateFormat.getDateInstance();
-                                dateFormat.format(new Date(Long.valueOf(properties.getLong("time"))).getTime());
+                                String formattedDate = dateFormat.format(new Date(Long.valueOf(properties.getLong("time"))).getTime());
 
                                 MarkerOptions markerOptions = new MarkerOptions();
                                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
                                 markerOptions.title(earthQuake.getPlace());
                                 markerOptions.position(new LatLng(lat, lon));
+                                markerOptions.snippet("Magnitude: "+
+                                        earthQuake.getMagnitude() + "\n" +
+                                        "Date: " + formattedDate);
 
                                 Marker marker = mMap.addMarker(markerOptions);
+                                marker.setTag(earthQuake.getPlace());
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 1));
                             }
                         } catch (JSONException e) {

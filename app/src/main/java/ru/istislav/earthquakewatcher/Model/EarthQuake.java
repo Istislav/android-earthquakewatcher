@@ -1,6 +1,6 @@
 package ru.istislav.earthquakewatcher.Model;
 
-public class EarchQuake {
+public class EarthQuake {
     private String place;
     private double magnitude;
     private long time;
@@ -9,7 +9,7 @@ public class EarchQuake {
     private double lat;
     private double lon;
 
-    public EarchQuake(String place, double magnitude, long time, String detailLink, String type, double lat, double lon) {
+    public EarthQuake(String place, double magnitude, long time, String detailLink, String type, double lat, double lon) {
         this.place = place;
         this.magnitude = magnitude;
         this.time = time;
@@ -19,7 +19,7 @@ public class EarchQuake {
         this.lon = lon;
     }
 
-    public EarchQuake() {
+    public EarthQuake() {
 
     }
 
