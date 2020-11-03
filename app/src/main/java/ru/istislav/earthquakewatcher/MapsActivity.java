@@ -36,9 +36,10 @@ import org.json.JSONObject;
 import java.util.Date;
 
 import ru.istislav.earthquakewatcher.Model.EarthQuake;
+import ru.istislav.earthquakewatcher.UI.CustomInfoWindow;
 import ru.istislav.earthquakewatcher.Util.Constants;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     private LocationManager locationManager;
@@ -134,6 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.setInfoWindowAdapter(new CustomInfoWindow(getApplicationContext()));
 //        // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
 //        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -194,5 +196,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
     }
 }
