@@ -8,6 +8,7 @@ public class EarthQuake {
     private String type;
     private double lat;
     private double lon;
+    private String formattedDate;
 
     public EarthQuake(String place, double magnitude, long time, String detailLink, String type, double lat, double lon) {
         this.place = place;
@@ -78,4 +79,8 @@ public class EarthQuake {
     public void setLon(double lon) {
         this.lon = lon;
     }
+
+    public void setFormattedDate(String formattedDate) { this.formattedDate = formattedDate; }
+
+    public String getFormattedDate() { return this.formattedDate; }
 }

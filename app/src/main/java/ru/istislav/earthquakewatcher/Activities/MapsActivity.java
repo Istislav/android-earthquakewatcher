@@ -1,4 +1,4 @@
-package ru.istislav.earthquakewatcher;
+package ru.istislav.earthquakewatcher.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -19,7 +20,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,11 +42,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import ru.istislav.earthquakewatcher.Data.EarthQuakeFiller;
 import ru.istislav.earthquakewatcher.Model.EarthQuake;
+import ru.istislav.earthquakewatcher.R;
 import ru.istislav.earthquakewatcher.UI.CustomInfoWindow;
 import ru.istislav.earthquakewatcher.Util.Constants;
 
@@ -59,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     private BitmapDescriptor[] iconColors;
+    private Button showListBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        showListBtn = (Button) findViewById(R.id.showListBtn);
 
         iconColors = new BitmapDescriptor[] {
             BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE),
@@ -81,84 +86,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
         };
 
+        showListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this, QuakesListActivity.class));
+            }
+        });
+
         queue = Volley.newRequestQueue(this);
 
-        getEarthQuake();
+        EarthQuakeFiller earthQuakeFiller = new EarthQuakeFiller(this);
+        earthQuakeFiller.getEarthQuake();;
+        //getEarthQuake();
     }
 
 
 
-    private void getEarthQuake() {
-        final EarthQuake earthQuake = new EarthQuake();
+    public void fillEarthQuake(ArrayList<EarthQuake> earthQuakes) {
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.URL,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray features = response.getJSONArray("features");
-                            //for (int i = 0; i < features.length(); i++) {
-                            for (int i = 0; i < Constants.LIMIT; i++) {
-                                JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
-                                String place = properties.getString("place");
-                                Log.d("Properties:", place);
+        for (int i = 0; i<earthQuakes.size(); i++) {
+            EarthQuake earthQuake = earthQuakes.get(i);
 
-                                // getting geometry object
-                                JSONObject geometry = features.getJSONObject(i).getJSONObject("geometry");
-                                // longitude latitude location array
-                                JSONArray coorditantes = geometry.getJSONArray("coordinates");
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.icon(iconColors[Constants.randomInt(0, iconColors.length)]);
+            markerOptions.title(earthQuake.getPlace());
+            LatLng latLng = new LatLng(earthQuake.getLat(), earthQuake.getLon());
+            markerOptions.position(latLng);
+            markerOptions.snippet("Magnitude: "+
+                    earthQuake.getMagnitude() + "\n" +
+                    "Date: " + earthQuake.getFormattedDate());
 
-                                double lon = coorditantes.getDouble(0);
-                                double lat = coorditantes.getDouble(1);
+            // Add circle to markers that have mag > x
+            if (earthQuake.getMagnitude() >= 2.0) {
+                CircleOptions circleOptions = new CircleOptions();
+                circleOptions.center(new LatLng(earthQuake.getLat(), earthQuake.getLon()));
+                circleOptions.radius(30000);
+                circleOptions.strokeWidth(3.6f);
+                circleOptions.fillColor(Color.RED);
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 
-                                earthQuake.setPlace(place);
-                                earthQuake.setLon(lon);
-                                earthQuake.setLat(lat);
-                                earthQuake.setType(properties.getString("type"));
-                                earthQuake.setTime(properties.getLong("time"));
-                                earthQuake.setMagnitude(properties.getDouble("mag"));
-                                earthQuake.setDetailLink(properties.getString("detail"));
+                mMap.addCircle(circleOptions);
+            }
 
-                                java.text.DateFormat dateFormat = java.text.DateFormat.getDateInstance();
-                                String formattedDate = dateFormat.format(new Date(Long.valueOf(properties.getLong("time"))).getTime());
+            Marker marker = mMap.addMarker(markerOptions);
+            marker.setTag(earthQuake.getDetailLink());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 1));
+        }
 
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions.icon(iconColors[Constants.randomInt(0, iconColors.length)]);
-                                markerOptions.title(earthQuake.getPlace());
-                                markerOptions.position(new LatLng(lat, lon));
-                                markerOptions.snippet("Magnitude: "+
-                                        earthQuake.getMagnitude() + "\n" +
-                                        "Date: " + formattedDate);
-
-                                // Add circle to markers that have mag > x
-                                if (earthQuake.getMagnitude() >= 2.0) {
-                                    CircleOptions circleOptions = new CircleOptions();
-                                    circleOptions.center(new LatLng(earthQuake.getLat(), earthQuake.getLon()));
-                                    circleOptions.radius(30000);
-                                    circleOptions.strokeWidth(3.6f);
-                                    circleOptions.fillColor(Color.RED);
-                                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
-                                    mMap.addCircle(circleOptions);
-                                }
-
-
-                                Marker marker = mMap.addMarker(markerOptions);
-                                marker.setTag(earthQuake.getDetailLink());
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 1));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-        });
-        queue.add(jsonObjectRequest);
     }
 
     /**
