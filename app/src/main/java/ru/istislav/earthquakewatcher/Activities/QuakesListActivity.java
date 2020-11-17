@@ -44,12 +44,20 @@ public class QuakesListActivity extends ActivityWithQuakeOnMap {
         arrayList = new ArrayList<>();
 
         EarthQuakeFiller earthQuakeFiller = new EarthQuakeFiller(this);
-        earthQuakeFiller.getEarthQuake();
+        earthQuakeFiller.getEarthQuake(0);
     }
 
 
     @Override
     public void fillEarthQuake(ArrayList<EarthQuake> earthQuakes) {
+        for (int i = 0; i<earthQuakes.size(); i++) {
+            EarthQuake earthQuake = earthQuakes.get(i);
+            arrayList.add(earthQuake.getPlace());
+        }
 
+        arrayAdapter = new ArrayAdapter<>(QuakesListActivity.this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, arrayList);
+        listView.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
     }
 }

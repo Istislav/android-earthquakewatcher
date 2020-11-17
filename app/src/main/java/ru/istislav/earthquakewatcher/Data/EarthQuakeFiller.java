@@ -32,7 +32,7 @@ public class EarthQuakeFiller {
         queue = Volley.newRequestQueue(activity);
     }
 
-    public void getEarthQuake() {
+    public void getEarthQuake(final int limit) {
 
         final ArrayList<EarthQuake> earthQuakes = new ArrayList<>();
 
@@ -43,7 +43,8 @@ public class EarthQuakeFiller {
                 try {
                     JSONArray features = response.getJSONArray("features");
                     //for (int i = 0; i < features.length(); i++) {
-                    for (int i = 0; i < Constants.LIMIT; i++) {
+                    int cycleLimit = limit > 0 ? limit : features.length();
+                    for (int i = 0; i < cycleLimit; i++) {
                         JSONObject properties = features.getJSONObject(i).getJSONObject("properties");
                         String place = properties.getString("place");
                         Log.d("Properties:", place);

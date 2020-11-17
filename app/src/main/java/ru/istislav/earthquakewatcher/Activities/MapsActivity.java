@@ -99,7 +99,7 @@ public class MapsActivity extends ActivityWithQuakeOnMap implements OnMapReadyCa
         queue = Volley.newRequestQueue(this);
 
         EarthQuakeFiller earthQuakeFiller = new EarthQuakeFiller(this);
-        earthQuakeFiller.getEarthQuake();;
+        earthQuakeFiller.getEarthQuake(Constants.LIMIT);;
         //getEarthQuake();
     }
 
