@@ -19,10 +19,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.istislav.earthquakewatcher.Data.EarthQuakeFiller;
 import ru.istislav.earthquakewatcher.Model.EarthQuake;
 import ru.istislav.earthquakewatcher.R;
 
-public class QuakesListActivity extends AppCompatActivity {
+public class QuakesListActivity extends ActivityWithQuakeOnMap {
 
     private ArrayList<String> arrayList;
     private ListView listView;
@@ -42,31 +43,13 @@ public class QuakesListActivity extends AppCompatActivity {
 
         arrayList = new ArrayList<>();
 
-        //getAllQuakes(url);
+        EarthQuakeFiller earthQuakeFiller = new EarthQuakeFiller(this);
+        earthQuakeFiller.getEarthQuake();
     }
 
-//    void getAllQuakes(String url) {
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-//                url, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                EarthQuake earthQuake = new EarthQuake();
-//                try {
-//                    JSONArray jsonArray = response.getJSONArray("features");
-//                    for (int i = 0; i < LIMIT; i++) {
-//                        JSONO
-//                    }
-//
-//                } catch (Exception e) {
-//
-//                }
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//    }
+
+    @Override
+    public void fillEarthQuake(ArrayList<EarthQuake> earthQuakes) {
+
+    }
 }

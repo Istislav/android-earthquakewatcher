@@ -1,6 +1,7 @@
 package ru.istislav.earthquakewatcher.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -52,7 +53,9 @@ import ru.istislav.earthquakewatcher.R;
 import ru.istislav.earthquakewatcher.UI.CustomInfoWindow;
 import ru.istislav.earthquakewatcher.Util.Constants;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMarkerClickListener {
+
+public class MapsActivity extends ActivityWithQuakeOnMap implements OnMapReadyCallback,
+                    GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     private LocationManager locationManager;

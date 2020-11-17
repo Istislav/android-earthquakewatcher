@@ -17,15 +17,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ru.istislav.earthquakewatcher.Activities.ActivityWithQuakeOnMap;
 import ru.istislav.earthquakewatcher.Activities.MapsActivity;
 import ru.istislav.earthquakewatcher.Model.EarthQuake;
 import ru.istislav.earthquakewatcher.Util.Constants;
 
 public class EarthQuakeFiller {
-    private MapsActivity activity;
+    private ActivityWithQuakeOnMap activity;
     private RequestQueue queue;
 
-    public EarthQuakeFiller(MapsActivity activity) {
+    public EarthQuakeFiller(ActivityWithQuakeOnMap activity) {
         this.activity = activity;
 
         queue = Volley.newRequestQueue(activity);
