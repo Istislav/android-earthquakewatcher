@@ -189,11 +189,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                        .title("Hello"));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8));
+//                mMap.addMarker(new MarkerOptions()
+//                        .position(latLng)
+//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+//                        .title("Hello"));
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8));
             }
         }
     }
@@ -288,6 +288,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         stringBuilder.append("\n");
                     }
                     popList.setText(stringBuilder);
+
+                    dismissButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dismissButtonTop.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
                     dialogBuilder.setView(view);
                     dialog = dialogBuilder.create();
                     dialog.show();
