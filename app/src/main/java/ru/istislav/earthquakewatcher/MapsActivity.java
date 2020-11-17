@@ -289,6 +289,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     popList.setText(stringBuilder);
 
+                    htmlPop.loadDataWithBaseURL(null, "<p>Маша ела кашу</p><div>Каша съела машу</div>", "text/html", "UTF-8", null);
+
                     dismissButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
